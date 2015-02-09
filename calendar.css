@@ -58,9 +58,12 @@
 .ui-calendar-select-year>span:hover,.ui-calendar-select-month>span:hover {
 	border-bottom: 2px solid #86FF43;
 }
-
 .ui-calendar-date-distance-0 {
 	font-weight: bolder;
+}
+span.ui-calendar-date-distance-0:hover,span.ui-calendar-date-distance-0 {
+	border-color: transparent;
+	cursor: default;
 }
 .ui-calendar-date-distance-1 {
 	color: #999;
