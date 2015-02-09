@@ -165,8 +165,9 @@
 }
 .ui-calendar-day .events-area .event {
 	overflow: hidden;
-	height: 1.3em;
 	border-bottom: 1px solid transparent;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 .ui-calendar-day .events-area .event:hover {
 	border-bottom: 1px solid #6C70BE;
