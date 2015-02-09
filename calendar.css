@@ -1,25 +1,3 @@
-html, body {
-	height: 100%;
-}
-
-body {
-	background-color: #eee;
-	font-family: Helvetica Neue, Helvetica, Bitstream Vera Sans, Verdana, Sans;
-	font-weight: 200;
-}
-
-#calendar-container {
-	height: 80%;
-}
-
-#usage {
-	background: #ddd;
-}
-
-#calendar-container, #usage {
-	width: 90%;
-	margin: 0 auto;
-}
 
 .ui-calendar {
 	background: white;
