@@ -506,7 +506,9 @@
 
 		var actions = {
 			submit: function($popover, $calendar, dt) {
-				$calendar.calendar("addEvent", {date: dt, text: $popover.find("input[type=text]").val()});
+				var newtext = $popover.find("input[type=text]").val();
+				if (newtext != "")
+					$calendar.calendar("addEvent", {date: dt, text: newtext});
 				this.close($popover);
 			},
 			close: function($popover) {
