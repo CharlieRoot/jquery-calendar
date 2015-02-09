@@ -42,6 +42,15 @@
 			<br />
 			<pre>$("#calendar-container").calendar("addEvent", {date: "2015-02-10", text: "Sample event"});</pre>
 			parameter: event object, e.g. {date: "2015-02-10", text: "Sample event"}
+			<br />
+			<pre>$("#calendar-container").calendar("removeEvent", eventid);</pre>
+			parameters: self-describing
+			<br />
+			<pre>$("#calendar-container").calendar("changeEvent", { id: eventid, text: "new text"} );</pre>
+			parameters: self-describing
+			<p>
+			<b>TODO: store callbacks for event actions and call them</b>
+			</p>
 		</div>
 
 		<script>
