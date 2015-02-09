@@ -57,7 +57,9 @@
 							.append($("<div>").addClass("popover-arrow popover-arrow-left"))
 							.append($("<div>").addClass("popover-content"))
 							.append($("<div>").addClass("popover-close").html("✖").click(function () { 
-								data.elements.popover.fadeTo(200, 0, function () { data.elements.popover.removeClass("in"); }); 
+								data.elements.popover.fadeTo(200, 0, function () {
+									data.elements.popover.removeClass("in").find(".popover-content").empty();
+								}); 
 							}))
 							.append($("<div>").addClass("popover-arrow popover-arrow-right"))
 						);
@@ -144,7 +146,9 @@
 					var dt = dateIncrementedByMonths(data.settings.dateShown, shift);
 					var yearShift = dt.getFullYear() - data.settings.dateShown.getFullYear();
 
-					data.elements.popover.fadeTo(200, 0, function () { data.elements.popover.removeClass("in"); });
+					data.elements.popover.fadeTo(200, 0, function () { 
+						data.elements.popover.removeClass("in").find(".popover-content").empty();
+					});
 
 					// regenerate years selector
 					if (yearShift) {
@@ -506,7 +510,7 @@
 				this.close($popover);
 			},
 			close: function($popover) {
-				$popover.fadeTo(100, 0, function () { $popover.removeClass("in"); });
+				$popover.fadeTo(100, 0, function () { $popover.removeClass("in").find(".popover-content").empty(); });
 			}
 		}
 		var res = $("<div>").addClass("popover-content-inner");
@@ -564,7 +568,7 @@
 				this.close($popover);
 			},
 			close: function($popover) {
-				$popover.fadeTo(100, 0, function () { $popover.removeClass("in"); });
+				$popover.fadeTo(100, 0, function () { $popover.removeClass("in").find(".popover-content").empty(); });
 			},
 			del: function($popover, $calendar, eventid) {
 				$calendar.calendar("removeEvent", eventid);
