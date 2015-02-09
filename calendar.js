@@ -95,6 +95,13 @@
 			});
 		},
 
+		/*****
+		 *
+		 * update
+		 * draws entire calendar if no parameter is given
+		 * otherwise redraws given date cell if it is on screen
+		 *
+		 **/
 		update: function(updateDate) {
 			return this.each(function() {
 				var $this = $(this),
@@ -121,6 +128,12 @@
 			});
 		},
 
+		/*****
+		 *
+		 * shiftDate
+		 * shifts date currently shown to given number of months
+		 *
+		 **/
 		shiftDate: function(shift) {
 			return this.each(function() {
 				var $this = $(this),
@@ -133,8 +146,9 @@
 
 					data.elements.popover.fadeTo(200, 0, function () { data.elements.popover.removeClass("in"); });
 
+					// regenerate years selector
 					if (yearShift) {
-						if (Math.abs(yearShift) < data.yearsShiftCount*2 + 1) {
+						if (Math.abs(yearShift) < data.yearsShiftCount*2 + 1) { // add some items
 							if (yearShift < 0) {
 								var yearEl = data.elements.yearSelector.find("span:first-child");
 								var year = parseInt(yearEl.html());
@@ -150,7 +164,7 @@
 									data.elements.yearSelector.find("span:first-child").remove();
 								}
 							}
-						} else {
+						} else { // regenerate totally
 							data.elements.yearSelector.empty();
 							drawYearSelector($this, data.elements.yearSelector, data, dt);
 						}
@@ -164,7 +178,8 @@
 						});
 					}
 
-					if (Math.abs(shift) < data.monthsShiftCount*2 + 1) {
+					// regenerate months selector
+					if (Math.abs(shift) < data.monthsShiftCount*2 + 1) { // add some items
 						if (shift < 0) {
 							var monthEl = data.elements.monthSelector.find("span:first-child");
 							var elDt = dateIncrementedByMonths(data.settings.dateShown, monthEl.data("calendar-shift"));
@@ -182,7 +197,7 @@
 								data.elements.monthSelector.find("span:first-child").remove();
 							}
 						}
-					} else {
+					} else { // regenerate totally
 						data.elements.monthSelector.empty();
 						drawMonthSelector($this, data.elements.monthSelector, data, dt);
 					}
@@ -229,6 +244,14 @@
 			});
 		},
 
+		/*****
+		 *
+		 * addEvent
+		 * adds event to calendar and updates view
+		 * parameter e of form { date: "2001-10-01", text: "event description" }
+		 * e.date can be text parseable by Date() or Date object
+		 *
+		 **/
 		addEvent: function(e) {
 			return this.each(function() {
 				var $this = $(this),
@@ -259,6 +282,12 @@
 			});
 		}, 
 
+		/*****
+		 *
+		 * removeEvent
+		 * removes event from calendar with given id and updates view
+		 *
+		 **/
 		removeEvent: function(eventid) {
 			return this.each(function() {
 				var $this = $(this),
@@ -282,6 +311,13 @@
 			});
 		}, 
 
+		/*****
+		 *
+		 * changeEvent
+		 * changes event with given id text and updates view
+		 * parameter ev of form { id: eventid, text: "New text" }
+		 *
+		 **/
 		changeEvent: function(ev) {
 			return this.each(function() {
 				var $this = $(this),
@@ -318,6 +354,14 @@
 			$.error("Method '" + method + "' does not exist in jQuery.calendar");
 	};
 
+
+	/**********************************
+	 *
+	 * internal functions section
+	 * sometime should be collected in something like var $$ = { ... }
+	 *
+	 **********************************/
+	
 	/*****
 	 *
 	 * formatting and padding
@@ -348,6 +392,7 @@
 	function ISODate(dt) {
 		return format("{0}-{1}-{2}", dt.getFullYear(), lpad(dt.getMonth()+1, "0", 2), lpad(dt.getDate(), "0", 2));
 	}
+
 	/*****
 	 *
 	 * dateRoundedToDay
@@ -396,6 +441,17 @@
 		return res;
 	}
 
+	function findEventInStore(eventstore, eventid) {
+		if (typeof eventstore.idtodate[eventid] == 'undefined')
+			return null;
+
+		var f = eventstore.store[eventstore.idtodate[eventid]].filter(function(item) { return (item.id === eventid); });
+		if (f.length)
+			return { date: eventstore.idtodate[eventid], event: f[0] };
+
+		return null;
+	}
+
 	function performShiftDate(e) {
 		this.calendar("shiftDate", $(e.target).data("calendar-shift"));
 	}
@@ -407,6 +463,17 @@
 		data.elements.titleYear.html(showdt.getFullYear());
 	}
 
+	/*****
+	 *
+	 * updateSelectorsScroll
+	 * scrolls selectors so selected year and month appear in center
+	 *
+	 * @param $this - calendar element
+	 * @param data - calendar data
+	 * @param ysel - year selector element
+	 * @param msel - month selector element
+	 *
+	 **/
 	function updateSelectorsScroll($this, data, ysel, msel) {
 		var selYearEl = ysel.find("span:nth-child(" + (data.yearsShiftCount + 1) + ")");
 		var scrollYear = selYearEl.position().left - ysel.position().left - 
@@ -419,6 +486,17 @@
 		msel.animate({scrollLeft: scrollMonth}, 200);
 	}
 
+	/*****
+	 *
+	 * drawPopoverContentForAdding
+	 * creates a dialog for popover to add an event
+	 *
+	 * @param $this - calendar element
+	 * @param data - calendar data
+	 * @param dt - date to add event
+	 * @return DOM-tree of created dialog
+	 *
+	 **/
 	function drawPopoverContentForAdding($this, data, dt) {
 		var __ = data.settings.locale;
 
@@ -458,17 +536,17 @@
 		return res;
 	}
 
-	function findEventInStore(eventstore, eventid) {
-		if (typeof eventstore.idtodate[eventid] == 'undefined')
-			return null;
-
-		var f = eventstore.store[eventstore.idtodate[eventid]].filter(function(item) { return (item.id === eventid); });
-		if (f.length)
-			return { date: eventstore.idtodate[eventid], event: f[0] };
-
-		return null;
-	}
-
+	/*****
+	 *
+	 * drawPopoverContentForEditing
+	 * creates a dialog for popover to edit given event
+	 *
+	 * @param $this - calendar element
+	 * @param data - calendar data
+	 * @param eventid - event's id
+	 * @return DOM-tree of created dialog
+	 *
+	 **/
 	function drawPopoverContentForEditing($this, data, eventid) {
 		var __ = data.settings.locale;
 
@@ -528,7 +606,17 @@
 		return res;
 	}
 
-
+	/*****
+	 *
+	 * showPopover
+	 * shows popover with given content, hiding it if it's already shown then showing in new place
+	 *
+	 * @param $this - calendar element
+	 * @param data - calendar data
+	 * @param el - element which is anchor for popover new position
+	 * @param content - content to show in popover
+	 *
+	 **/
 	function showPopover($this, data, el, content) {
 		var po = data.elements.popover;
 		if (po.hasClass("in")) {
