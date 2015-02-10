@@ -506,8 +506,7 @@
 
 		var actions = {
 			submit: function($popover, $calendar, dt) {
-				var newtext = $popover.find("input[type=text]").val()
-									.replace(/[<>]/g, function(m) { return { '<' : '&lt;', '>': '&gt;' }[m]; });
+				var newtext = $popover.find("input[type=text]").val();
 				if (newtext != "")
 					$calendar.calendar("addEvent", {date: dt, text: newtext});
 				this.close($popover);
@@ -563,8 +562,7 @@
 
 		var actions = {
 			submit: function($popover, $calendar, eventid) {
-				var newtext = $popover.find("input[type=text]").val()
-									.replace(/[<>]/g, function(m) { return { '<' : '&lt;', '>': '&gt;' }[m]; });
+				var newtext = $popover.find("input[type=text]").val();
 				if (newtext == "")
 					$calendar.calendar("removeEvent", eventid);
 				else
@@ -591,7 +589,7 @@
 					else if (e.keyCode == 13)
 						actions.submit(data.elements.popover, $this, eventid);
 				})
-				.val(ev.event.text.replace(/&[lg]t;/g, function(m) { return { '&lt;': '<', '&gt;': '>' }[m]; }))
+				.val(ev.event.text)
 			);
 		res.append(
 			$("<div>")
@@ -688,7 +686,7 @@
 			for (var e in events)
 				el.append(
 					$("<div>")
-						.addClass("event").html(events[e].text)
+						.addClass("event").html(events[e].text.replace(/[<>]/g, function(m) { return { '<' : '&lt;', '>': '&gt;' }[m]; }))
 						.data("calendar-eventid", events[e].id)
 						.click(function(e) {
 							e.stopPropagation();
