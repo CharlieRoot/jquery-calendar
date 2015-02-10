@@ -506,7 +506,8 @@
 
 		var actions = {
 			submit: function($popover, $calendar, dt) {
-				var newtext = $popover.find("input[type=text]").val();
+				var newtext = $popover.find("input[type=text]").val()
+									.replace(/[<>]/g, function(m) { return { '<' : '&lt;', '>': '&gt;' }[m]; });
 				if (newtext != "")
 					$calendar.calendar("addEvent", {date: dt, text: newtext});
 				this.close($popover);
@@ -562,7 +563,8 @@
 
 		var actions = {
 			submit: function($popover, $calendar, eventid) {
-				var newtext = $popover.find("input[type=text]").val();
+				var newtext = $popover.find("input[type=text]").val()
+									.replace(/[<>]/g, function(m) { return { '<' : '&lt;', '>': '&gt;' }[m]; });
 				if (newtext == "")
 					$calendar.calendar("removeEvent", eventid);
 				else
@@ -589,7 +591,7 @@
 					else if (e.keyCode == 13)
 						actions.submit(data.elements.popover, $this, eventid);
 				})
-				.val(ev.event.text)
+				.val(ev.event.text.replace(/&[lg]t;/g, function(m) { return { '&lt;': '<', '&gt;': '>' }[m]; }))
 			);
 		res.append(
 			$("<div>")
