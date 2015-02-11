@@ -297,7 +297,7 @@
 					if (!e.text || e.text == "")
 						$.error("Event's property text is empty");
 
-					var dt = new Date(e.date);
+					var dt = dateRoundedToDay(new Date(makeLocalDate(e.date)));
 					var dtkey = ISODate(dt);
 
 					if (typeof data.events.store[dtkey] == 'undefined')
@@ -335,9 +335,9 @@
 						$.error("Event with id " + eventid + " not found");
 
 					delete data.events.idtodate[eventid];
-					data.events.store[ev.date] = data.events.store[ev.date].filter(function(item) { return (item.id != eventid); });
-					if (data.events.store[ev.date].length == 0)
-						delete data.events.store[ev.date];
+					data.events.store[ev.dtkey] = data.events.store[ev.dtkey].filter(function(item) { return (item.id != eventid); });
+					if (data.events.store[ev.dtkey].length == 0)
+						delete data.events.store[ev.dtkey];
 
 					methods.update.call($this, (new Date(ev.date)));
 				}
@@ -410,20 +410,36 @@
   		});
 	}
 
-	function lpad(string, sym, len) {
-		var res = (string instanceof String ? string : String(string));
+	function lpad(arg, sym, len) {
+		var res = (typeof arg == "string" ? arg : (typeof arg == "number" ? arg.toString() : new String(arg)));
 		while (res.length < len) res = sym + res;
 		return res;
 	}
 
-	function rpad(string, sym, len) {
-		var res = (string instanceof String ? string : String(string));
+	function rpad(arg, sym, len) {
+		var res = (typeof arg == "string" ? arg : (typeof arg == "number" ? arg.toString() : new String(arg)));
 		while (res.length < len) res += sym;
 		return res;
 	}
 
 	function ISODate(dt) {
 		return format("{0}-{1}-{2}", dt.getFullYear(), lpad(dt.getMonth()+1, "0", 2), lpad(dt.getDate(), "0", 2));
+	}
+
+	function makeLocalDate(dtstring) {
+		if (!makeLocalDate.postfix) {
+			var dt = new Date();
+			var tzOffs = dt.getTimezoneOffset();
+
+			makeLocalDate.postfix = "T00:00:00" + (tzOffs > 0 ? "-" : "+") + 
+				lpad(parseInt(Math.abs(tzOffs/60)), "0", 2) +
+				":" + lpad(parseInt(Math.abs(tzOffs%60)), "0", 2);
+		}
+
+		if (typeof dtstring == "string" && dtstring.match(/^\d{4}-\d{2}-\d{2}$/))
+			dtstring += makeLocalDate.postfix;
+
+		return dtstring;
 	}
 
 	/*****
@@ -479,8 +495,9 @@
 			return null;
 
 		var f = eventstore.store[eventstore.idtodate[eventid]].filter(function(item) { return (item.id === eventid); });
-		if (f.length)
-			return { date: eventstore.idtodate[eventid], event: f[0] };
+		if (f.length) {
+			return { date: makeLocalDate(eventstore.idtodate[eventid]), dtkey: eventstore.idtodate[eventid], event: f[0] };
+		}
 
 		return null;
 	}
